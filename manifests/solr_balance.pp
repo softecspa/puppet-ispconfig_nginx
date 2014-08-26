@@ -16,20 +16,29 @@ define ispconfig_nginx::solr_balance (
     listen_ip   => $listen_ip,
     proxy       => "http://solr-${clustername}",
     sslcertname => $sslcertname,
-    lines       => [ "auth_basic \"Solr ${clustername} admin\";",
-                     "auth_basic_user_file  ${htpasswd_path}/.htpasswd;"]
+    auth_basic  => "Solr ${clustername} admin",
+    auth_basic_user_file  => "${htpasswd_path}/.htpasswd",
+    #raw_prepend => [
+    #  'location = / {',
+    #  '  root  /var/www;',
+    #  '  index  index.html  index.htm  index.php ;',
+    #  '  return 301 $scheme://$host/solr$request_uri;',
+    #  '}',
+    #]
   }
 
   nginx::resource::location {"nginx-redir-${name}":
-    vhost     => "nginx-vhost-$domain_name",
-    location  => '= /',
-    www_root  => '/var/www',
-    lines     => [ 'return 301 $scheme://$host/solr$request_uri' ]
+    vhost               => "nginx-vhost-${domain_name}",
+    location            => '= /',
+    www_root            => '/var/www',
+    location_cfg_append => { 'return' => '301 $scheme://$host/solr$request_uri'},
+    ssl                 => true,
+    ssl_only            => true,
   }
 
   nginx::resource::upstream {"solr-${clustername}": }
 
-  Nginx::Resource::Upstream_member <<| upstream == "solr-${clustername}" |>>
+  Nginx::Resource::Upstream::Member <<| upstream == "solr-${clustername}" |>>
 
   #importa i frammenti per l'htpasswd
   concat {"${htpasswd_path}/.htpasswd":
