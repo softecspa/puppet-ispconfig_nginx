@@ -38,7 +38,9 @@ define ispconfig_nginx::solr_balance (
 
   nginx::resource::upstream {"solr-${clustername}": }
 
-  Nginx::Resource::Upstream::Member <<| upstream == "solr-${clustername}" |>>
+  Nginx::Resource::Upstream::Member <<| upstream == "solr-${clustername}" |>> {
+    require => Nginx::Resource::Upstream["solr-${clustername}"]
+  }
 
   #importa i frammenti per l'htpasswd
   concat {"${htpasswd_path}/.htpasswd":
