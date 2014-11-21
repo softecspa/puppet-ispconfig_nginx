@@ -31,7 +31,7 @@ define ispconfig_nginx::solr_balance (
 
   nginx::resource::upstream {"solr-${clustername}": }
 
-  Nginx::Resource::Upstream::Member <<| upstream == "solr-${clustername}" |>> {
+  Ispconfig_solr::Nginx::Upstream_member <<| upstream == "solr-${clustername}" |>> {
     require => Nginx::Resource::Upstream["solr-${clustername}"]
   }
 
