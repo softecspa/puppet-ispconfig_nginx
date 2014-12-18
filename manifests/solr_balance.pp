@@ -39,10 +39,10 @@ define ispconfig_nginx::solr_balance (
     owner     => 'root',
     group     => 'www-data',
   }
-  Apache2::Htaccess_export <<| tag == 'nagios_htpasswd_softec_admin' |>> {
+  Generic_account::Htpasswd_fragment <<| tag == 'nagios_htpasswd_softec_admin' |>> {
     filepath  => "${htpasswd_path}/.htpasswd"
   }
-  Apache2::Htaccess_export <<| tag == 'nagios_htpasswd_softec_devel' |>> {
+  Generic_account::Htpasswd_fragment <<| tag == 'nagios_htpasswd_softec_devel' |>> {
     filepath  => "${htpasswd_path}/.htpasswd"
   }
 }
